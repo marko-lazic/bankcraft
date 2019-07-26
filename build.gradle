@@ -13,9 +13,8 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         //classpath "com.github.dwursteisen:libgdx-addons:$libgdx_addons"
-        classpath "com.github.dwursteisen.libgdx-addons:aseprite-plugin:$libgdx_addons"
+//        classpath "com.github.dwursteisen.libgdx-addons:aseprite-plugin:$libgdx_addons"
         classpath 'com.android.tools.build:gradle:3.1.4'
-
     }
 }
 
@@ -58,6 +57,7 @@ project(":desktop") {
         compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 
         compile "com.github.Anuken:GdxGifRecorder:$gdx_recorder"
+
     }
 }
 
@@ -75,9 +75,10 @@ project(":core") {
         compile "io.github.libktx:ktx-scene2d:$ktxVersion"
         compile "io.github.libktx:ktx-log:$ktxVersion"
         compile "org.apache.commons:commons-text:1.1"
-        compile "com.github.dwursteisen.libgdx-addons:aseprite-addons:$libgdx_addons"
-        compile "com.github.dwursteisen.libgdx-addons:ashley-addons:$libgdx_addons"
-        compile "com.github.dwursteisen.libgdx-addons:core-addons:$libgdx_addons"
+        compile "com.google.inject:guice:4.1.+"
+//        compile "com.github.dwursteisen.libgdx-addons:aseprite-addons:$libgdx_addons"
+//        compile "com.github.dwursteisen.libgdx-addons:ashley-addons:$libgdx_addons"
+//        compile "com.github.dwursteisen.libgdx-addons:core-addons:$libgdx_addons"
 
     }
 }
