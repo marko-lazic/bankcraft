@@ -1,13 +1,12 @@
 package net.bankcraft
 
-import com.badlogic.ashley.core.Engine
-import com.badlogic.ashley.core.EntitySystem
+import com.badlogic.ashley.core.*
+import com.badlogic.ashley.systems.IteratingSystem
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.math.MathUtils
@@ -29,7 +28,17 @@ class BankCraftGame : ApplicationAdapter() {
         injector.getInstance(Systems::class.java).list.map { injector.getInstance(it) }.forEach{ system ->
             engine.addSystem(system)
         }
+
+        createEntities()
     }
+
+    private fun createEntities() {
+        engine.addEntity(Entity().apply {
+            add(TextureComponent(img))
+            add(TransformComponent(Vector2(0F, 0F)))
+        })
+    }
+
     private val position: Vector2 = Vector2(300f, 220f)
     private var time: Float = 0f
 
@@ -38,13 +47,10 @@ class BankCraftGame : ApplicationAdapter() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         engine.update(Gdx.graphics.deltaTime)
 
-        batch.begin()
-        batch.draw(img, 0f, 0f)
-        batch.end()
+
+
         val (x,y) = position
-
         time += Gdx.graphics.deltaTime * 10f
-
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled)
         shapeRenderer.color = Color.CHARTREUSE
         shapeRenderer.circle(x + MathUtils.cos(time), y, 60f)
@@ -59,9 +65,28 @@ class BankCraftGame : ApplicationAdapter() {
     }
 }
 
-class SpamSystem @Inject constructor(private val spriteBatch: SpriteBatch): EntitySystem() {
+open class ComponentResolver<T : Component>(componentCLass: Class<T>) {
+    var MAPPER = ComponentMapper.getFor(componentCLass)
+    operator fun get(entity: Entity) = MAPPER.get(entity)
+}
+
+//class SpamSystem @Inject constructor(private val spriteBatch: SpriteBatch): EntitySystem() {
+//    override fun update(deltaTime: Float) {
+//        println(deltaTime.toString() + "; " + spriteBatch)
+//    }
+//}
+
+class RenderingSystem @Inject constructor(private val batch: SpriteBatch): IteratingSystem(Family.all(TransformComponent::class.java, TextureComponent::class.java).get()) {
     override fun update(deltaTime: Float) {
-        println(deltaTime.toString() + "; " + spriteBatch)
+        batch.begin()
+        super.update(deltaTime)
+        batch.end()
+    }
+
+    override fun processEntity(entity: Entity, deltaTime: Float) {
+        val img = entity.texture.texture
+        val position = entity.transform.position
+        batch.draw(img, position.x,position.y)
     }
 }
 
@@ -73,7 +98,7 @@ class GameModule(private val bankCraftGame: BankCraftGame) : Module {
     @Provides @Singleton
     fun systems() : Systems {
         return Systems(listOf(
-                SpamSystem::class.java
+            RenderingSystem::class.java
         ))
     }
 }
