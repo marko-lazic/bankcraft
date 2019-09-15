@@ -7,6 +7,12 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.Body
 
+val Entity.id : IdComponent get() = IdComponent[this]
+
+class IdComponent(val id: Int): Component {
+    companion object: ComponentResolver<IdComponent>(IdComponent::class.java)
+}
+
 val Entity.transform : TransformComponent get() = TransformComponent[this]
 
 class TransformComponent(val position: Vector2) : Component {

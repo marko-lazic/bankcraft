@@ -7,7 +7,10 @@ import net.bankcraft.BankCraftGame
 object DesktopLauncher {
     @JvmStatic
     fun main(arg: Array<String>) {
-        val config = LwjglApplicationConfiguration()
+        val config = LwjglApplicationConfiguration().apply {
+            width = 1080
+            height = 720
+        }
         LwjglApplication(BankCraftGame(), config)
     }
 }
