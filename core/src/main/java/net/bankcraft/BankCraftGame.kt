@@ -7,6 +7,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.*
 import com.google.gson.Gson
@@ -25,11 +26,14 @@ import javax.xml.bind.annotation.XmlType
 
 class BankCraftGame : ApplicationAdapter() {
     lateinit var batch: SpriteBatch
-    private lateinit var img: Texture
     private lateinit var coinImg: Texture
     val engine = Engine()
     private lateinit var injector: Injector
     private var worldCoinEntities = mutableListOf<Entity>()
+
+    companion object {
+        internal lateinit var img: Texture
+    }
 
     override fun create() {
         batch = SpriteBatch()
@@ -86,10 +90,10 @@ class BankCraftGame : ApplicationAdapter() {
     private fun createCoin(coin: Coin) {
         val world = injector.getInstance(World::class.java)
         val coinEntity = Entity().apply {
-            add(TextureComponent(coinImg))
+            add(TextureRegionComponent(TextureRegion(coinImg)))
             val (id, x, y) = coin
             add(IdComponent(id))
-            add(TransformComponent(Vector2(x.pixelsToMeters, y.pixelsToMeters)))
+            add(TransformComponent(Vector2(x.pixelsToMeters, y.pixelsToMeters), 0F, 1F))
 
             val body = world.createBody(BodyDef().apply {
                 type = BodyDef.BodyType.DynamicBody
@@ -97,7 +101,6 @@ class BankCraftGame : ApplicationAdapter() {
             body.createFixture(CircleShape().apply {
                 radius = coinImg.width.pixelsToMeters / 2.2F
                 position = Vector2(-0.3F, 0.3F)
-                //                setAsBox(coinImg.width.pixelsToMeters / 2F, coinImg.height.pixelsToMeters / 2F)
             }, 1.0F)
             body.setTransform(transform.position, 0F)
             add(PhysicsComponent(body))

@@ -9,6 +9,8 @@ class PhysicsSynchronizationSystem @Inject constructor(): IteratingSystem(Family
         PhysicsComponent::class.java).get()) {
 
     override fun processEntity(entity: Entity, deltaTime: Float) {
-        entity.transform.position.set(entity.physics.body.position)
+        val body = entity.physics.body
+        entity.transform.position.set(body.position)
+        entity.transform.angleRadian = body.angle
     }
 }
