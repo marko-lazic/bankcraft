@@ -3,47 +3,37 @@ package net.bankcraft
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.Family
 import com.badlogic.ashley.systems.IteratingSystem
-import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.PerspectiveCamera
+import com.badlogic.gdx.graphics.g3d.Environment
+import com.badlogic.gdx.graphics.g3d.ModelBatch
+import com.badlogic.gdx.graphics.g3d.utils.CameraInputController
 import com.badlogic.gdx.math.MathUtils
 import com.google.inject.Inject
 
-class RenderingSystem @Inject constructor(private val batch: SpriteBatch,
-                                          private val camera: OrthographicCamera)
-    : IteratingSystem(Family.all(TransformComponent::class.java).one(TextureComponent::class.java, TextureRegionComponent::class.java).get()) {
+class RenderingSystem @Inject constructor(private val batch: ModelBatch,
+                                          private val camera: PerspectiveCamera,
+                                          private val environment: Environment)
+    : IteratingSystem(Family.all(GameObjectComponent::class.java).get()) {
+
+    private var camController: CameraInputController = CameraInputController(camera)
+
+    init {
+        Gdx.input.inputProcessor = camController
+    }
 
     override fun update(deltaTime: Float) {
-        batch.projectionMatrix = camera.combined
-        batch.begin()
+        camController.update()
+        batch.begin(camera)
         super.update(deltaTime)
         batch.end()
     }
 
     override fun processEntity(entity: Entity, deltaTime: Float) {
-        val position = entity.transform.position
-        entity.tryGet(TextureComponent)?.let { textureComponent ->
-            val img = textureComponent.texture
-            batch.draw(img,
-                    position.x - img.width.pixelsToMeters / 2F,
-                    position.y - img.height.pixelsToMeters / 2F,
-                    img.width.pixelsToMeters, img.height.pixelsToMeters)
-        }
-        entity.tryGet(TextureRegionComponent)?.let { textureRegionComponent ->
-            val img = textureRegionComponent.textureRegion
-            val width = img.regionWidth.pixelsToMeters
-            val height = img.regionHeight.pixelsToMeters
-            val scale = entity.transform.scale
-
-            batch.draw(img,
-                    position.x - width / 2, position.y - height / 2,
-                    width / 2F, height / 2F,
-                    width, height,
-                    scale, scale,
-                    entity.transform.angleRadian.toDegrees
-            )
-        }
+        val modelInstance = entity.gameObject.gameObject
+        batch.render(modelInstance, environment)
     }
 }
 
-val Float.toDegrees : Float
+val Float.toDegrees: Float
     get() = MathUtils.radiansToDegrees * this
