@@ -7,7 +7,6 @@ import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.g3d.ModelBatch
-import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.physics.bullet.Bullet
 import com.badlogic.gdx.physics.bullet.collision.*
 import com.google.inject.Guice
@@ -28,18 +27,17 @@ class BankCraftGame : ApplicationAdapter() {
 
     override fun create() {
         modelBatch = ModelBatch()
-        Bullet.init()
+        injector = Guice.createInjector(GameModule(this))
 
+        Bullet.init()
         collisionConfig = btDefaultCollisionConfiguration()
         dispatcher = btCollisionDispatcher(collisionConfig)
         broadphase = btDbvtBroadphase()
         collisionWorld = btCollisionWorld(dispatcher, broadphase, collisionConfig)
         contactListener = MyContactListener(engine)
 
-        injector = Guice.createInjector(GameModule(this))
         initEntitySystems()
         createPlatformBox()
-        spawn()
     }
 
     private fun initEntitySystems() {
@@ -54,20 +52,6 @@ class BankCraftGame : ApplicationAdapter() {
         engine.addEntity(Entity().apply {
             add(GameObjectComponent(GameObjectFactory().constructors.get("ground").construct().apply {
                 collisionWorld.addCollisionObject(body, GROUND_FLAG, ALL_FLAG)
-            }))
-        })
-    }
-
-    private fun spawn() {
-        engine.addEntity(Entity().apply {
-            add(GameObjectComponent(GameObjectFactory().constructors.get("sphere").construct().apply {
-                moving = true
-                transform.setFromEulerAngles(MathUtils.random(360f), MathUtils.random(360f), MathUtils.random(360f))
-                transform.trn(MathUtils.random(-2.5f, 2.5f), 9f, MathUtils.random(-2.5f, 2.5f))
-                body.worldTransform = transform
-                body.userValue = engine.entities.size()
-                body.collisionFlags = body.collisionFlags or btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK
-                collisionWorld.addCollisionObject(body, OBJECT_FLAG, GROUND_FLAG)
             }))
         })
     }
@@ -93,9 +77,9 @@ class BankCraftGame : ApplicationAdapter() {
     override fun resize(width: Int, height: Int) {}
 
     companion object {
-        val GROUND_FLAG = (1 shl 8)
-        val OBJECT_FLAG = (1 shl 9)
-        val ALL_FLAG: Int = -1
+        const val GROUND_FLAG = (1 shl 8)
+        const val OBJECT_FLAG = (1 shl 9)
+        const val ALL_FLAG: Int = -1
     }
 }
 

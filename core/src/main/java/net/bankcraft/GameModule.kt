@@ -17,6 +17,7 @@ import com.google.inject.Singleton
 data class Systems(val list : List<Class<out EntitySystem>>)
 
 class GameModule(private val bankCraftGame: BankCraftGame) : Module {
+
     override fun configure(binder: Binder) {
         binder.requireAtInjectOnConstructors()
         binder.requireExactBindingAnnotations()
@@ -27,6 +28,7 @@ class GameModule(private val bankCraftGame: BankCraftGame) : Module {
     @Singleton
     fun systems() : Systems {
         return Systems(listOf(
+                SpawnSystem::class.java,
                 PhysicsSystem::class.java,
                 CollisionSystem::class.java,
                 RenderingSystem::class.java
