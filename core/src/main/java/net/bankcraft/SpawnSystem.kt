@@ -20,7 +20,7 @@ class SpawnSystem @Inject constructor(private val collisionWorld: btCollisionWor
     }
 
     private fun spawn() {
-        val constructors = GameObjectFactory().constructors
+        val constructors = GameObjectFactory.constructors
         val obj = constructors.values[1 + MathUtils.random(constructors.size - 2)].construct()
         engine.addEntity(Entity().apply {
             add(GameObjectComponent(obj.apply {

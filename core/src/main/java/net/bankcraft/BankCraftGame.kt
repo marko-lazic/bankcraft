@@ -50,7 +50,7 @@ class BankCraftGame : ApplicationAdapter() {
 
     private fun createPlatformBox() {
         engine.addEntity(Entity().apply {
-            add(GameObjectComponent(GameObjectFactory().constructors.get("ground").construct().apply {
+            add(GameObjectComponent(GameObjectFactory.constructors.get("ground").construct().apply {
                 collisionWorld.addCollisionObject(body, GROUND_FLAG, ALL_FLAG)
             }))
         })
@@ -86,8 +86,11 @@ class BankCraftGame : ApplicationAdapter() {
 class MyContactListener @Inject constructor(val engine: Engine) : ContactListener() {
     override fun onContactAdded(userValue0: Int, partId0: Int, index0: Int, userValue1: Int, partId1: Int, index1: Int): Boolean {
         val instances = engine.getEntitiesFor(Family.all(GameObjectComponent::class.java).get())
-        instances.get(userValue0).gameObject.gameObject.apply { moving = false }
-        instances.get(userValue1).gameObject.gameObject.apply { moving = false }
+        if (userValue1 == 0) {
+            instances.get(userValue0).gameObject.gameObject.apply { moving = false }
+        } else if (userValue0 == 0) {
+            instances.get(userValue1).gameObject.gameObject.apply { moving = false }
+        }
         return true
     }
 }
