@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g3d.Environment
 import com.badlogic.gdx.graphics.g3d.ModelBatch
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight
-import com.badlogic.gdx.physics.bullet.collision.btCollisionWorld
+import com.badlogic.gdx.physics.bullet.dynamics.btDynamicsWorld
 import com.google.inject.Binder
 import com.google.inject.Module
 import com.google.inject.Provides
@@ -30,7 +30,7 @@ class GameModule(private val bankCraftGame: BankCraftGame) : Module {
         return Systems(listOf(
                 SpawnSystem::class.java,
                 PhysicsSystem::class.java,
-                CollisionSystem::class.java,
+                PhysicsSynchronizationSystem::class.java,
                 RenderingSystem::class.java
         ))
     }
@@ -39,8 +39,10 @@ class GameModule(private val bankCraftGame: BankCraftGame) : Module {
     @Singleton
     fun camera(): PerspectiveCamera {
         return PerspectiveCamera(67F, Gdx.graphics.width.toFloat(), Gdx.graphics.height.toFloat()).apply {
-            position.set(3f, 7f, 15f)
-            lookAt(0F, 4f, 0F)
+            position.set(3F, 7F, 15F)
+            lookAt(0F, 4F, 0F)
+            near = 1F
+            far = 300F
             update()
         }
     }
@@ -49,8 +51,8 @@ class GameModule(private val bankCraftGame: BankCraftGame) : Module {
     @Singleton
     fun environment(): Environment {
         return Environment().apply {
-            set(ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f))
-            add(DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f))
+            set(ColorAttribute(ColorAttribute.AmbientLight, 0.4F, 0.4F, 0.4F, 1F))
+            add(DirectionalLight().set(0.8F, 0.8F, 0.8F, -1F, -0.8F, -0.2F))
         }
     }
 
@@ -60,5 +62,5 @@ class GameModule(private val bankCraftGame: BankCraftGame) : Module {
 
     @Provides
     @Singleton
-    fun collisionWorld(): btCollisionWorld = bankCraftGame.collisionWorld
+    fun dynamicsWorld(): btDynamicsWorld = bankCraftGame.dynamicsWorld
 }

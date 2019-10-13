@@ -44,12 +44,12 @@ class GameObjectFactory : Disposable {
 
         private fun initConstructors(): ArrayMap<String, GameObject.Constructor> {
             val constructors: ArrayMap<String, GameObject.Constructor> = ArrayMap(String::class.java, GameObject.Constructor::class.java)
-            constructors.put("ground", GameObject.Constructor(model, "ground", btBoxShape(Vector3(2.5f, 0.5f, 2.5f))))
-            constructors.put("sphere", GameObject.Constructor(model, "sphere", btSphereShape(0.5f)))
-            constructors.put("box", GameObject.Constructor(model, "box", btBoxShape(Vector3(0.5f, 0.5f, 0.5f))))
-            constructors.put("cone", GameObject.Constructor(model, "cone", btConeShape(0.5f, 2f)))
-            constructors.put("capsule", GameObject.Constructor(model, "capsule", btCapsuleShape(.5f, 1f)))
-            constructors.put("cylinder", GameObject.Constructor(model, "cylinder", btCylinderShape(Vector3(.5f, 1f, .5f))))
+            constructors.put("ground", GameObject.Constructor(model, "ground", btBoxShape(Vector3(2.5f, 0.5f, 2.5f)), Mass.Static))
+            constructors.put("sphere", GameObject.Constructor(model, "sphere", btSphereShape(0.5f), Mass.Dynamic(1F)))
+            constructors.put("box", GameObject.Constructor(model, "box", btBoxShape(Vector3(0.5f, 0.5f, 0.5f)), Mass.Dynamic(1F)))
+            constructors.put("cone", GameObject.Constructor(model, "cone", btConeShape(0.5f, 2f), Mass.Dynamic(1F)))
+            constructors.put("capsule", GameObject.Constructor(model, "capsule", btCapsuleShape(.5f, 1f), Mass.Dynamic(1F)))
+            constructors.put("cylinder", GameObject.Constructor(model, "cylinder", btCylinderShape(Vector3(.5f, 1f, .5f)), Mass.Dynamic(1F)))
             return constructors
         }
     }
