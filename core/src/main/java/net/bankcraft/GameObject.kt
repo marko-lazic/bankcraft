@@ -69,12 +69,12 @@ fun Mass.toFloat(): Float {
 }
 
 class BcMotionState : btMotionState() {
-    var transform: Matrix4? = null
+    lateinit var transform: Matrix4
     override fun getWorldTransform(worldTrans: Matrix4) {
-        worldTrans.set(transform!!)
+        worldTrans.set(transform)
     }
 
     override fun setWorldTransform(worldTrans: Matrix4) {
-        transform!!.set(worldTrans)
+        transform.set(worldTrans)
     }
 }

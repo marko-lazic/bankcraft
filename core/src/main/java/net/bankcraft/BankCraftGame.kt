@@ -40,7 +40,7 @@ class BankCraftGame : ApplicationAdapter() {
         constraintSolver = btSequentialImpulseConstraintSolver()
         dynamicsWorld = btDiscreteDynamicsWorld(dispatcher, broadphase, constraintSolver, collisionConfig)
         dynamicsWorld.gravity = Vector3(0F, -10F, 0F)
-//        contactListener = injector.getInstance(BcContactListener::class.java)
+        contactListener = injector.getInstance(BcContactListener::class.java)
 
         initEntitySystems()
         initEntityListeners()
