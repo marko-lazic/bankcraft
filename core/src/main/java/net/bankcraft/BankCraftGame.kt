@@ -30,6 +30,7 @@ class BankCraftGame : ApplicationAdapter() {
     lateinit var constraintSolver: btConstraintSolver
 
     override fun create() {
+        AssetManager.loadModels()
         modelBatch = ModelBatch()
         injector = Guice.createInjector(GameModule(this))
 
@@ -40,7 +41,7 @@ class BankCraftGame : ApplicationAdapter() {
         constraintSolver = btSequentialImpulseConstraintSolver()
         dynamicsWorld = btDiscreteDynamicsWorld(dispatcher, broadphase, constraintSolver, collisionConfig)
         dynamicsWorld.gravity = Vector3(0F, -10F, 0F)
-        contactListener = injector.getInstance(BcContactListener::class.java)
+//        contactListener = injector.getInstance(BcContactListener::class.java)
 
         initEntitySystems()
         initEntityListeners()
@@ -63,7 +64,7 @@ class BankCraftGame : ApplicationAdapter() {
 
     private fun createPlatformBox() {
         engine.addEntity(Entity().apply {
-            ground = add(ShapeComponent(GameObjectFactory.constructors.get("ground").construct().apply {
+            ground = add(ShapeComponent(WorldFactory.createGround().apply {
                 body.collisionFlags = body.collisionFlags or btCollisionObject.CollisionFlags.CF_KINEMATIC_OBJECT
                 dynamicsWorld.addRigidBody(body)
                 body.contactCallbackFlag = GROUND_FLAG

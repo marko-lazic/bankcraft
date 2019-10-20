@@ -39,6 +39,10 @@ class GameObjectFactory : Disposable {
             mb.node().id = "cylinder"
             mb.part("cylinder", GL20.GL_TRIANGLES, (Usage.Position or Usage.Normal).toLong(),
                     Material(ColorAttribute.createDiffuse(Color.MAGENTA))).cylinder(1f, 2f, 1f, 10)
+            mb.node().id = "energyNode"
+            mb.part("energyNode", GL20.GL_TRIANGLES, (Usage.Position or Usage.Normal).toLong(), Material(ColorAttribute.createDiffuse(Color.GRAY)))
+            mb.node("ship", AssetManager.manager.get(Resources.SHIP, Model::class.java))
+
             return mb.end()
         }
 
@@ -50,6 +54,9 @@ class GameObjectFactory : Disposable {
             constructors.put("cone", GameObject.Constructor(model, "cone", btConeShape(0.5f, 2f), Mass.Dynamic(1F)))
             constructors.put("capsule", GameObject.Constructor(model, "capsule", btCapsuleShape(.5f, 1f), Mass.Dynamic(1F)))
             constructors.put("cylinder", GameObject.Constructor(model, "cylinder", btCylinderShape(Vector3(.5f, 1f, .5f)), Mass.Dynamic(1F)))
+            constructors.put("ship", GameObject.Constructor(model, "ship",
+                    btBoxShape(Vector3(2.5f, 0.5f, 2.5f)),
+                    Mass.Dynamic(1F)))
             return constructors
         }
     }
