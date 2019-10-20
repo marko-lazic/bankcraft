@@ -18,10 +18,16 @@ class ModelInstanceComponent(var modelInstance: ModelInstance) : Component {
     companion object : ComponentResolver<ModelInstanceComponent>(ModelInstanceComponent::class.java)
 }
 
-val Entity.gameObject: GameObjectComponent get() = GameObjectComponent[this]
+val Entity.shape: ShapeComponent get() = ShapeComponent[this]
 
-class GameObjectComponent(var gameObject: GameObject) : Component {
-    companion object : ComponentResolver<GameObjectComponent>(GameObjectComponent::class.java)
+class ShapeComponent(var gameObject: GameObject) : Component {
+    companion object : ComponentResolver<ShapeComponent>(ShapeComponent::class.java)
+}
+
+val Entity.lift: LiftComponent get() = LiftComponent[this]
+
+class LiftComponent : Component {
+    companion object : ComponentResolver<LiftComponent>(LiftComponent::class.java)
 }
 
 open class ComponentResolver<T : Component>(componentCLass: Class<T>) {

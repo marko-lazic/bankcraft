@@ -15,7 +15,7 @@ import com.google.inject.Inject
 class RenderingSystem @Inject constructor(private val batch: ModelBatch,
                                           private val camera: PerspectiveCamera,
                                           private val environment: Environment)
-    : IteratingSystem(Family.all(GameObjectComponent::class.java).get()) {
+    : IteratingSystem(Family.all(ShapeComponent::class.java).one().get()) {
 
     private var camController: CameraInputController = CameraInputController(camera)
 
@@ -35,7 +35,7 @@ class RenderingSystem @Inject constructor(private val batch: ModelBatch,
     }
 
     override fun processEntity(entity: Entity, deltaTime: Float) {
-        val modelInstance = entity.gameObject.gameObject
+        val modelInstance = entity.shape.gameObject
         batch.render(modelInstance, environment)
     }
 }

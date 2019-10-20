@@ -56,5 +56,8 @@ class GameObjectFactory : Disposable {
 
     override fun dispose() {
         model.dispose()
+        constructors.forEach {
+            it.value.dispose()
+        }
     }
 }

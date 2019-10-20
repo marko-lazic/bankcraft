@@ -2,16 +2,26 @@ package net.bankcraft
 
 import com.badlogic.gdx.graphics.g3d.Model
 import com.badlogic.gdx.graphics.g3d.ModelInstance
+import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.physics.bullet.collision.btCollisionShape
 import com.badlogic.gdx.physics.bullet.dynamics.btRigidBody
+import com.badlogic.gdx.physics.bullet.linearmath.btMotionState
 import com.badlogic.gdx.utils.Disposable
 
 class GameObject(model: Model, node: String, constructionInfo: btRigidBody.btRigidBodyConstructionInfo) : ModelInstance(model, node), Disposable {
     val body: btRigidBody = btRigidBody(constructionInfo)
+    private val motionState: BcMotionState = BcMotionState()
+
+    init {
+        motionState.transform = transform
+        body.motionState = motionState
+
+    }
 
     override fun dispose() {
         body.dispose()
+        motionState.dispose()
     }
 
     class Constructor(private val model: Model,
@@ -39,6 +49,7 @@ class GameObject(model: Model, node: String, constructionInfo: btRigidBody.btRig
         }
 
         override fun dispose() {
+            model.dispose()
             shape.dispose()
             constructionInfo.dispose()
         }
@@ -54,5 +65,16 @@ fun Mass.toFloat(): Float {
     return when (this) {
         is Mass.Static -> 0F
         is Mass.Dynamic -> this.kilograms
+    }
+}
+
+class BcMotionState : btMotionState() {
+    var transform: Matrix4? = null
+    override fun getWorldTransform(worldTrans: Matrix4) {
+        worldTrans.set(transform!!)
+    }
+
+    override fun setWorldTransform(worldTrans: Matrix4) {
+        transform!!.set(worldTrans)
     }
 }

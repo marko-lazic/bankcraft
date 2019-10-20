@@ -1,7 +1,9 @@
 package net.bankcraft
 
 import com.badlogic.ashley.core.Engine
+import com.badlogic.ashley.core.EntityListener
 import com.badlogic.ashley.core.EntitySystem
+import com.badlogic.ashley.core.Family
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.PerspectiveCamera
 import com.badlogic.gdx.graphics.g3d.Environment
@@ -15,6 +17,8 @@ import com.google.inject.Provides
 import com.google.inject.Singleton
 
 data class Systems(val list : List<Class<out EntitySystem>>)
+
+data class Listeners(val list: List<Pair<Family, out EntityListener>>)
 
 class GameModule(private val bankCraftGame: BankCraftGame) : Module {
 
@@ -30,8 +34,17 @@ class GameModule(private val bankCraftGame: BankCraftGame) : Module {
         return Systems(listOf(
                 SpawnSystem::class.java,
                 PhysicsSystem::class.java,
-                PhysicsSynchronizationSystem::class.java,
-                RenderingSystem::class.java
+                RenderingSystem::class.java,
+                LiftMovingSystem::class.java,
+                DeathSystem::class.java
+        ))
+    }
+
+    @Provides
+    @Singleton
+    fun listeners(): Listeners {
+        return Listeners(listOf(
+                Pair(Family.all(ShapeComponent::class.java).get(), ShapeListener())
         ))
     }
 

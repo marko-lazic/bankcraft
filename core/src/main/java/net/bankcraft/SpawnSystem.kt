@@ -2,7 +2,6 @@ package net.bankcraft
 
 import com.badlogic.ashley.core.Entity
 import com.badlogic.ashley.core.EntitySystem
-import com.badlogic.ashley.core.Family
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.physics.bullet.collision.btCollisionObject
 import com.badlogic.gdx.physics.bullet.dynamics.btDynamicsWorld
@@ -16,7 +15,7 @@ class SpawnSystem @Inject constructor(private val dynamicsWorld: btDynamicsWorld
         spawnTimer = spawnTimer.minus(deltaTime)
         if ((spawnTimer) < 0) {
             spawn()
-            spawnTimer = 1.5f
+            spawnTimer = 0.5f
         }
     }
 
@@ -24,13 +23,15 @@ class SpawnSystem @Inject constructor(private val dynamicsWorld: btDynamicsWorld
         val constructors = GameObjectFactory.constructors
         val obj = constructors.values[1 + MathUtils.random(constructors.size - 2)].construct()
         engine.addEntity(Entity().apply {
-            add(GameObjectComponent(obj.apply {
+            add(ShapeComponent(obj.apply {
                 transform.setFromEulerAngles(MathUtils.random(360f), MathUtils.random(360f), MathUtils.random(360f))
                 transform.trn(MathUtils.random(-2.5f, 2.5f), 9f, MathUtils.random(-2.5f, 2.5f))
-                body.worldTransform = transform
-                body.userValue = engine.getEntitiesFor(Family.all(GameObjectComponent::class.java).get()).size()
+                body.proceedToTransform(transform)
+                body.userValue = BankCraftGame.nextCounter()
                 body.collisionFlags = body.collisionFlags or btCollisionObject.CollisionFlags.CF_CUSTOM_MATERIAL_CALLBACK
-                dynamicsWorld.addRigidBody(body, BankCraftGame.OBJECT_FLAG, BankCraftGame.GROUND_FLAG)
+                dynamicsWorld.addRigidBody(body)
+                body.contactCallbackFlag = BankCraftGame.OBJECT_FLAG
+                body.contactCallbackFilter = BankCraftGame.GROUND_FLAG or BankCraftGame.WALL_FLAG
             }))
         })
     }
